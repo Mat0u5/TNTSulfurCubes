@@ -10,9 +10,6 @@ on:
 jobs:
   build:
     if: ${{ !contains(github.event.head_commit.message, '{skip_build}') }}
-    strategy:
-      matrix:
-        minecraft_version: [26.1]
     runs-on: ubuntu-22.04
     steps:
       - name: checkout repository
@@ -35,5 +32,6 @@ jobs:
       - name: capture build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Artifacts-${{ matrix.minecraft_version }}
-          path: versions/${{ matrix.minecraft_version }}/build/libs/
+          name: Built JARs
+          path: |
+            ./versions/**/build/libs/*.jar
