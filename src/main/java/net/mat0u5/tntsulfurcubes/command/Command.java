@@ -7,6 +7,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 import static net.minecraft.commands.Commands.literal;
 
@@ -28,8 +29,19 @@ public class Command {
     public static int testCommand(CommandSourceStack source) {
         MinecraftServer server = source.getServer();
         final Player self = source.getPlayer();
+        if (self == null) return -1;
 
-
+        self.level().explode(
+                self,
+                self.getLastDamageSource(),
+                null,
+                self.getX(),
+                self.getY(),
+                self.getZ(),
+                (float)(4 + self.getRandom().nextDouble() * 1.5 * self.getSpeed()),
+                false,
+                Level.ExplosionInteraction.TNT
+        );
 
         return 1;
     }

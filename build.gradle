@@ -58,12 +58,12 @@ processResources {
 				"minecraftVersion": project.property('minecraft_version'),
 				"javaVersion": project.property('java_version')
 	}
-	filesMatching("lifeseries.mixins.json") {
+	filesMatching("tntsulfurcubes.mixins.json") {
 		expand "javaVersion": java25 ? "JAVA_25" : java21 ? "JAVA_21" : "JAVA_17"
 	}
 }
 processClientResources {
-	filesMatching("lifeseries.client.mixins.json") {
+	filesMatching("tntsulfurcubes.client.mixins.json") {
 		expand "javaVersion": java25 ? "JAVA_25" : java21 ? "JAVA_21" : "JAVA_17"
 	}
 }
