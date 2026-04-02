@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "net.mat0u5.modid.mixin.client",
+	"compatibilityLevel": "${javaVersion}",
+	"client": [
+		"ExampleMixin"
+	],
+	"mixins": [
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

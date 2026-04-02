@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "net.mat0u5.modid.mixin",
+	"compatibilityLevel": "${javaVersion}",
+	"mixins": [
+		"ExampleMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

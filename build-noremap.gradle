@@ -1,0 +1,105 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
+	id 'maven-publish'
+}
+
+static boolean isValidVersion(String string) {
+	return string != null && !string.isEmpty() && !string.equalsIgnoreCase("null") && !string.equalsIgnoreCase("[VERSIONED]")
+}
+
+version = "${project.mod_version}+${project.minecraft_version}"
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	maven {
+		url = "https://www.cursemaven.com"
+		content {
+			includeGroup "curse.maven"
+		}
+	}
+}
+
+loom {
+	splitEnvironmentSourceSets()
+	mods {
+		"modid" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+	fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json")
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	if (isValidVersion(project.carpet_mod_version)) runtimeOnly "curse.maven:carpet-349239:${project.carpet_mod_version}"
+}
+
+loom {
+	runConfigs.all {
+		//ideConfigGenerated true
+		runDir "../../run"
+	}
+}
+def java21 = stonecutter.eval(stonecutter.current.version, ">=1.20.5")
+def java25 = stonecutter.eval(stonecutter.current.version, ">=26.1")
+
+processResources {
+	filesMatching("fabric.mod.json") {
+		expand "version": project.property('mod_version'),
+				"targetVersion": project.property('target_version'),
+				"minecraftVersion": project.property('minecraft_version'),
+				"javaVersion": project.property('java_version')
+	}
+	filesMatching("lifeseries.mixins.json") {
+		expand "javaVersion": java25 ? "JAVA_25" : java21 ? "JAVA_21" : "JAVA_17"
+	}
+}
+processClientResources {
+	filesMatching("lifeseries.client.mixins.json") {
+		expand "javaVersion": java25 ? "JAVA_25" : java21 ? "JAVA_21" : "JAVA_17"
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = java25 ? 25 : java21 ? 21 : 17
+}
+
+java {
+	def javaVersion = java25 ? JavaVersion.VERSION_25 : java21 ? JavaVersion.VERSION_21 : JavaVersion.VERSION_17
+	targetCompatibility = javaVersion
+	sourceCompatibility = javaVersion
+}
+
+jar {
+	inputs.property "archivesName", project.base.archivesName
+
+	from("LICENSE") {
+		rename { "${it}_${inputs.properties.archivesName}"}
+	}
+}
+
+// configure the maven publication
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			artifactId = project.archives_base_name
+			from components.java
+		}
+	}
+
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+	repositories {
+		// Add repositories to publish to here.
+		// Notice: This block does NOT have the same function as the block in the top level.
+		// The repositories here will be used for publishing your artifact, not for
+		// retrieving dependencies.
+	}
+}
