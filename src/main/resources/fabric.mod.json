@@ -1,31 +1,31 @@
 {
 	"schemaVersion": 1,
-	"id": "modid",
+	"id": "tntsulfurcubes",
 	"version": "${version}",
-	"name": "Example mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "TNT Sulfur Cubes",
+	"description": "Exploding sulfur cubes with TNT!",
 	"authors": [
 		"Mat0u5"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/Mat0u5/FabricModTemplate"
+		"homepage": "https://modrinth.com/mod/tnt-sulfur-cubes",
+		"sources": "https://github.com/Mat0u5/TNTSulfurCubes"
 	},
 	"license": "MIT",
-	"icon": "assets/modid/icon.png",
+	"icon": "assets/tntsulfurcubes/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.mat0u5.modid.Main"
+			"net.mat0u5.tntsulfurcubes.Main"
 		],
 		"client": [
-			"net.mat0u5.modid.MainClient"
+			"net.mat0u5.tntsulfurcubes.MainClient"
 		]
 	},
 	"mixins": [
-		"modid.mixins.json",
+		"tntsulfurcubes.mixins.json",
 		{
-			"config": "modid.client.mixins.json",
+			"config": "tntsulfurcubes.client.mixins.json",
 			"environment": "client"
 		}
 	],

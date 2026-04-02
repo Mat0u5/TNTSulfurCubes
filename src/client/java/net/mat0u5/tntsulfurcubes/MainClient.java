@@ -1,9 +1,10 @@
-package net.mat0u5.modid;
+package net.mat0u5.tntsulfurcubes;
 
 import net.fabricmc.api.ClientModInitializer;
 
 public class MainClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        Main.LOGGER.info("[Client] TNT Sulflur Cubes initialized!");
     }
 }

@@ -1,15 +1,15 @@
-package net.mat0u5.modid.mixin.client;
+package net.mat0u5.tntsulfurcubes.mixin;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Minecraft.class)
+@Mixin(MinecraftServer.class)
 public class ExampleMixin {
-	@Inject(at = @At("HEAD"), method = "setLevel")
+	@Inject(at = @At("HEAD"), method = "loadLevel")
 	private void init(CallbackInfo info) {
-		System.out.println("[ExampleMixin] Client joined level");
+		System.out.println("[ExampleMixin] Server loaded level!");
 	}
 }

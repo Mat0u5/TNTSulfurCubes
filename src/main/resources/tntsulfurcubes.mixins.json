@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "net.mat0u5.modid.mixin",
+	"package": "net.mat0u5.tntsulfurcubes.mixin",
 	"compatibilityLevel": "${javaVersion}",
 	"mixins": [
 		"ExampleMixin"
