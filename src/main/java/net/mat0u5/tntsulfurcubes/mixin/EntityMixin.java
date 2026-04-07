@@ -42,6 +42,7 @@ public class EntityMixin implements IEntityBounce {
     @Inject(method = "tick", at = @At("HEAD"))
     private void tick(CallbackInfo ci) {
         Entity self = (Entity)(Object)this;
+        if (self.isRemoved()) return;
         if (!(self instanceof SulfurCube cube) || !cube.hasBodyItem()) return;
         ItemStack item = cube.getBodyArmorItem();
         if (item == null) return;
@@ -54,13 +55,13 @@ public class EntityMixin implements IEntityBounce {
         if (tsc$explodeFuse > 0) {
             tsc$explodeFuse--;
             if (tsc$explodeFuse == 0) {
+                self.discard();
                 serverLevel.explode(
                         self,
                         self.getX(), self.getY(), self.getZ(),
                         4,
                         Level.ExplosionInteraction.TNT
                 );
-                self.discard();
             }
         }
     }
@@ -74,6 +75,7 @@ public class EntityMixin implements IEntityBounce {
     private void onBounce(BlockState effectState, boolean xCollision, boolean zCollision, Vec3 movement, CallbackInfo ci) {
         if (tsc$ticksDontExplode > 0) return;
         Entity self = (Entity)(Object)this;
+        if (self.isRemoved()) return;
         if (!(self instanceof SulfurCube cube) || !cube.hasBodyItem()) return;
         ItemStack item = cube.getBodyArmorItem();
         if (item == null) return;
@@ -86,13 +88,13 @@ public class EntityMixin implements IEntityBounce {
         double strength = pre.subtract(post).length();
 
         if (strength > 0.6) {
+            self.discard();
             serverLevel.explode(
                     self,
                     self.getX(), self.getY(), self.getZ(),
                     (float)(Math.min(2, strength) * 4),
                     Level.ExplosionInteraction.TNT
             );
-            self.discard();
         }
     }
 }

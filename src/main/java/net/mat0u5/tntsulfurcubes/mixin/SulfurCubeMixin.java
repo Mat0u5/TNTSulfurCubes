@@ -52,15 +52,13 @@ public class SulfurCubeMixin {
 	@Inject(method = "hurtServer", at = @At("HEAD"))
 	public void explodeOnExplosionDamage(ServerLevel par1, DamageSource source, float par3, CallbackInfoReturnable<Boolean> cir) {
 		SulfurCube self = (SulfurCube)(Object)this;
+		if (self.isRemoved()) return;
 		if (!(self.level() instanceof ServerLevel serverLevel)) return;
+		if (!(self instanceof IEntityBounce accessor)) return;
 		if (source.is(DamageTypes.EXPLOSION)|| source.is(DamageTypes.PLAYER_EXPLOSION)) {
-			serverLevel.explode(
-					self,
-					self.getX(), self.getY(), self.getZ(),
-					4,
-					Level.ExplosionInteraction.TNT
-			);
-			self.discard();
+			if (accessor.tsc$getFuse() == -1) {
+				accessor.tsc$setFuse(10);
+			}
 		}
 	}
 
@@ -72,8 +70,10 @@ public class SulfurCubeMixin {
 		accessor.tsc$setDontExplodeTicks(25);
 	}
 
-	@Inject(method = "mobInteract", at = @At("HEAD"))
+	@Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
 	private void lightFuse(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+		ItemStack heldItem = player.getItemInHand(hand);
+		if (!heldItem.is(Items.FLINT_AND_STEEL)) return;
 		SulfurCube self = (SulfurCube)(Object)this;
 		if (!(self instanceof IEntityBounce accessor)) return;
 		if (!(self.level() instanceof ServerLevel serverLevel)) return;
@@ -89,7 +89,7 @@ public class SulfurCubeMixin {
 			if (!self.isSilent()) {
 				self.level().playSound(null, self.getX(), self.getY(), self.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
 			}
-			cir.setReturnValue(InteractionResult.SUCCESS);
+			cir.setReturnValue(InteractionResult.SUCCESS_SERVER);
 		}
 	}
 }
