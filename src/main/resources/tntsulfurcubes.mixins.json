@@ -3,7 +3,8 @@
 	"package": "net.mat0u5.tntsulfurcubes.mixin",
 	"compatibilityLevel": "${javaVersion}",
 	"mixins": [
-		"ExampleMixin"
+		"EntityMixin",
+		"SulfurCubeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

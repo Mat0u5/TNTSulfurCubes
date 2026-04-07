@@ -14,14 +14,6 @@
 	"license": "MIT",
 	"icon": "assets/tntsulfurcubes/icon.png",
 	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"net.mat0u5.tntsulfurcubes.Main"
-		],
-		"client": [
-			"net.mat0u5.tntsulfurcubes.MainClient"
-		]
-	},
 	"mixins": [
 		"tntsulfurcubes.mixins.json",
 		{
@@ -32,8 +24,7 @@
 	"depends": {
 		"fabricloader": ">=0.14.21",
 		"minecraft": "${targetVersion}",
-		"java": ">=${javaVersion}",
-		"fabric-api": "*"
+		"java": ">=${javaVersion}"
 	},
 	"suggests": {
 		"another-mod": "*"
