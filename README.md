@@ -1,9 +1,5 @@
-Adds exploding TNT Sulfur Cubes!
+Sulfur Cubes with TNT now explode when they hit obstacles hard enough.
 
-Right-clicking a sulfur cube with tnt in your hand will put the tnt block inside, just like with any other block.
+Modifies the vanilla TNT Sulfur Cubes to instantly explode if they "bounce" with enough force.
 
 Explosion strength scales with velocity.
-
-Right-clicking with a flint and steel, or nearby explosions will also make them explode.
-
-You can use boats or gentle pushing to safely transport TNT cubes (Or of course put a different block in them for a time).

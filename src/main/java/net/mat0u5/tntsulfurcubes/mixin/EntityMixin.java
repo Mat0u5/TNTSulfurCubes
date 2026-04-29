@@ -22,21 +22,10 @@ public class EntityMixin implements IEntityBounce {
     private Vec3 tsc$preBounceVel = Vec3.ZERO;
     @Unique
     private int tsc$ticksDontExplode = 0;
-    @Unique
-    private int tsc$explodeFuse = -1;
 
     @Override
     public void tsc$setDontExplodeTicks(int ticks) {
         tsc$ticksDontExplode = ticks;
-    }
-    @Override
-    public void tsc$setFuse(int ticks) {
-        tsc$explodeFuse = ticks;
-    }
-
-    @Override
-    public int tsc$getFuse() {
-        return tsc$explodeFuse;
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -48,21 +37,8 @@ public class EntityMixin implements IEntityBounce {
         if (item == null) return;
         if (!item.is(Items.TNT)) return;
         if (!(self.level() instanceof ServerLevel serverLevel)) return;
-
         if (tsc$ticksDontExplode > 0) {
             tsc$ticksDontExplode--;
-        }
-        if (tsc$explodeFuse > 0) {
-            tsc$explodeFuse--;
-            if (tsc$explodeFuse == 0) {
-                self.discard();
-                serverLevel.explode(
-                        self,
-                        self.getX(), self.getY(), self.getZ(),
-                        4,
-                        Level.ExplosionInteraction.TNT
-                );
-            }
         }
     }
 
