@@ -15,6 +15,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//? if neoforge && <= 26.2
+//import net.minecraft.core.BlockPos;
+
 @Mixin(Entity.class)
 public class EntityMixin implements IEntityBounce {
 
@@ -42,13 +45,23 @@ public class EntityMixin implements IEntityBounce {
         }
     }
 
+    //? if neoforge && <= 26.2 {
+    /*@Inject(method = "restituteMovementAfterCollisions(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;ZZLnet/minecraft/world/phys/Vec3;)V", at = @At("HEAD"))
+    private void capturePreBounce(BlockPos effectPos, BlockState effectState, boolean xCollision, boolean zCollision, Vec3 movement, CallbackInfo ci) {
+    *///?} else {
     @Inject(method = "restituteMovementAfterCollisions", at = @At("HEAD"))
     private void capturePreBounce(BlockState effectState, boolean xCollision, boolean zCollision, Vec3 movement, CallbackInfo ci) {
+    //?}
         tsc$preBounceVel = ((Entity)(Object)this).getDeltaMovement();
     }
 
+    //? if neoforge && <= 26.2 {
+    /*@Inject(method = "restituteMovementAfterCollisions(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;ZZLnet/minecraft/world/phys/Vec3;)V", at = @At("TAIL"))
+    private void onBounce(BlockPos effectPos, BlockState effectState, boolean xCollision, boolean zCollision, Vec3 movement, CallbackInfo ci) {
+    *///?} else {
     @Inject(method = "restituteMovementAfterCollisions", at = @At("TAIL"))
     private void onBounce(BlockState effectState, boolean xCollision, boolean zCollision, Vec3 movement, CallbackInfo ci) {
+    //?}
         if (tsc$ticksDontExplode > 0) return;
         Entity self = (Entity)(Object)this;
         if (self.isRemoved()) return;
