@@ -1,4 +1,4 @@
-#Available Tags: {skip_build}
+#Available Tags: {build}
 
 name: build
 
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    if: ${{ !contains(github.event.head_commit.message, '{skip_build}') }}
+    if: ${{ contains(github.event.head_commit.message, '{build}') }}
     runs-on: ubuntu-22.04
     steps:
       - name: checkout repository

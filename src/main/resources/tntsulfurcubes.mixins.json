@@ -1,12 +1,15 @@
 {
-	"required": true,
-	"package": "net.mat0u5.tntsulfurcubes.mixin",
-	"compatibilityLevel": "${javaVersion}",
-	"mixins": [
-		"EntityMixin",
-		"SulfurCubeMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "package": "net.mat0u5.tntsulfurcubes.mixin",
+  "required": true,
+  "minVersion": "0.8",
+  "refmap": "${id}.mixins.refmap.json",
+  "compatibilityLevel": "${java}",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "EntityMixin",
+    "SulfurCubeMixin"
+  ],
+  "client": []
 }

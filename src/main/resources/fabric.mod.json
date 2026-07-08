@@ -1,32 +1,27 @@
 {
-	"schemaVersion": 1,
-	"id": "tntsulfurcubes",
-	"version": "${version}",
-	"name": "TNT Sulfur Cubes",
-	"description": "Exploding sulfur cubes with TNT!",
-	"authors": [
-		"Mat0u5"
-	],
-	"contact": {
-		"homepage": "https://modrinth.com/mod/tnt-sulfur-cubes",
-		"sources": "https://github.com/Mat0u5/TNTSulfurCubes"
-	},
-	"license": "MIT",
-	"icon": "assets/tntsulfurcubes/icon.png",
-	"environment": "*",
-	"mixins": [
-		"tntsulfurcubes.mixins.json",
-		{
-			"config": "tntsulfurcubes.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"depends": {
-		"fabricloader": ">=0.14.21",
-		"minecraft": "${targetVersion}",
-		"java": ">=${javaVersion}"
-	},
-	"suggests": {
-		"another-mod": "*"
-	}
+  "schemaVersion": 1,
+  "id": "${id}",
+  "name": "${name}",
+  "version": "${version}",
+  "authors": ["${authors}"],
+  "contributors": ["${contributors}"],
+  "contact": {
+    "sources": "${sources_url}",
+    "issues": "${issues_url}",
+    "homepage": "${homepage_url}"
+  },
+  "description": "${description}",
+  "icon": "icon.png",
+  "license": "${license}",
+  "environment": "*",
+  "accessWidener": "aw/${sc_version}.accesswidener",
+  "entrypoints": {
+    "main": [
+      "${group}.${id}.platform.fabric.FabricEntrypoint"
+    ]
+  },
+  "mixins": [
+    "${id}.mixins.json"
+  ],
+  "depends": {}
 }
