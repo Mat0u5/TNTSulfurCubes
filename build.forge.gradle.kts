@@ -11,6 +11,7 @@ fun prop(key: String) = project.property(key) as String
 val unobfuscated = stonecutter.eval(stonecutter.current.version, ">=26.1")
 val legacyForge = stonecutter.eval(stonecutter.current.version, "<=1.20")
 val usesOfficialMappings = stonecutter.eval(stonecutter.current.version, ">=1.16")
+val mergedDevOutput = stonecutter.eval(stonecutter.current.version, ">=1.17")
 val modernRuntimeLibs = stonecutter.eval(stonecutter.current.version, ">=1.18")
 val hasMixins = stonecutter.eval(stonecutter.current.version, ">=1.15")
 
@@ -48,6 +49,9 @@ minecraft {
 				systemProperty("mixin.env.disableRefMap", "true")
 				args("--mixin.config=${prop("mod.id")}.mixins.json")
 			}
+			@Suppress("UNCHECKED_CAST")
+			val modConfigs = mods as NamedDomainObjectContainer<net.minecraftforge.gradle.SlimeLauncherOptionsNested.ModConfig>
+			modConfigs.maybeCreate(prop("mod.id")).source(sourceSets["main"])
 		}
 		register("client") {
 			args("--username", "Player")
@@ -72,7 +76,7 @@ tasks.withType<JavaExec>().matching { it.name.startsWith("run") }.configureEach 
 		jvmArgs("--add-opens=java.base/java.lang.invoke=ALL-UNNAMED")
 	}
 }
-if (usesOfficialMappings) {
+if (mergedDevOutput) {
 	sourceSets.configureEach {
 		val dir = layout.buildDirectory.dir("sourcesSets/$name")
 		output.setResourcesDir(dir)
@@ -180,6 +184,62 @@ if (legacyForge) {
 			"-AmappingTypes=tsrg",
 			"-AdefaultObfuscationEnv=searge"
 		))
+	}
+
+	val srgMemberNames: Map<String, String> by lazy {
+		val tsrg = layout.buildDirectory.file("mappings/map2srg.tsrg").get().asFile
+		val names = HashMap<String, String>()
+		if (tsrg.exists()) {
+			var owner = ""
+			tsrg.forEachLine { raw ->
+				if (raw.isBlank() || raw.startsWith("tsrg2")) return@forEachLine
+				if (!raw.startsWith("\t")) {
+					owner = raw.trim().substringBefore(' ').replace('/', '.')
+					return@forEachLine
+				}
+				// Two leading tabs mark member metadata (static, parameter names, ...).
+				if (raw.startsWith("\t\t")) return@forEachLine
+				val parts = raw.trim().split(' ')
+				when {
+					parts.size == 2 -> names["$owner/${parts[0]}"] = parts[1]
+					parts.size == 3 && parts[1].startsWith("(") -> names["$owner/${parts[0]}${parts[1]}"] = parts[2]
+					parts.size == 3 -> names["$owner/${parts[0]}"] = parts[2]
+				}
+			}
+		}
+		names
+	}
+
+	fun remapAccessTransformerLine(line: String): String {
+		val comment = line.indexOf('#')
+		val code = (if (comment >= 0) line.substring(0, comment) else line).trim()
+		if (code.isEmpty()) return line
+
+		val tokens = code.split(Regex("\\s+"))
+		// "<access> <class>" widens the class itself and "*" / "*()" are wildcards - nothing to translate.
+		if (tokens.size < 3) return line
+		val owner = tokens[1]
+		val member = tokens[2]
+		if (member.startsWith("*")) return line
+
+		val descriptor = member.indexOf('(')
+		val srg = srgMemberNames["$owner/$member"]?.let {
+			if (descriptor >= 0) it + member.substring(descriptor) else it
+		}
+		if (srg == null) {
+			logger.warn("Access transformer: no SRG name for '$owner $member', shipping it untranslated.")
+			return line
+		}
+
+		val trailing = if (comment >= 0) " " + line.substring(comment) else " # $member"
+		return "${tokens[0]} $owner $srg$trailing"
+	}
+
+	tasks.withType<Jar>().configureEach {
+		dependsOn(extractMcpToSrg)
+		filesMatching("META-INF/accesstransformer.cfg") {
+			filter { line: String -> remapAccessTransformerLine(line) }
+		}
 	}
 }
 
